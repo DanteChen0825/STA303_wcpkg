@@ -1,0 +1,137 @@
+---
+title: "Wcpkg Vignette"
+author: "Zhiang Chen"
+date: "30/03/2021"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{wcpkg-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = TRUE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(wcpkg)
+```
+
+# Prerequisites
+This package use some function from "XML", "RCurl" and "rvest" to realize the web crawl, thus the user need to import these packages.
+
+# Main Functions
+There are 3 function in this package, get_table(), get_text() and get_image().
+
+## get_table()
+Using the get_table function we can crawl all the tables in the webpage. Entering the webpage address and return a list of data frames showing all the tables.
+
+For example, if we want to quickly save all the ambassadors send to Canda, we can find the webpage that contains the information and use get_table(), then we can save the table as a data frame. The following code shows the first 10 lines of the table of ambassadors send to Canada.
+```{r}
+ambassadors_to_Canada = get_table("https://en.wanweibaike.com/wiki-List%20of%20ambassadors%20to%20Canada")
+as.data.frame(ambassadors_to_Canada[2])[1:10,]
+```
+
+
+The following is an example we Crawl the opening military budget data for more than 100 countries from the webpage. By doing some data cleaning, using the data we have we can conduct a simple linear regression, and we might find that on average, each attack helicopter is correlated with a US$54.47 million increase in the military budget and some other interesting conclusions.
+
+```{r,  eval=FALSE}
+
+military_budget = get_table("https://en.wanweibaike.com/wiki-List%20of%20countries%20with%20warships")
+military_budget = as.data.frame(military_budget[4])
+
+
+military_budget <- military_budget[-1,]
+
+
+names(military_budget) <- c("Countries","Military budget","Main battle tanks","Aircraft carriers","AWS","Cruisers","Destroyers","Frigates","Corvettes","Nuclear submarines","Non-nuclear Submarines","Military aircraft","Attack helicopters","Nuclear weapons","Military satellites","Sources","")
+
+
+military_budget<- military_budget[1:170,]
+military_budget<- military_budget[,-((16):17)]
+military_budget<- military_budget[,-(1:1)]
+
+
+for (i in 2:171){
+   for (j in 1:14){
+     if (grepl("N", military_budget[i,j])!=FALSE){
+       military_budget[i,j] <- NA
+     } else if (grepl("a", military_budget[i,j])!=FALSE){
+       military_budget[i,j] <- NA
+     } else if (grepl("T", military_budget[i,j])!=FALSE){
+       military_budget[i,j] <- NA
+     } else if (grepl("h", military_budget[i,j])!=FALSE){
+       military_budget[i,j] <- NA
+     } else if (grepl("e", military_budget[i,j])!=FALSE){
+       military_budget[i,j] <- NA
+     } else if (grepl("f", military_budget[i,j])!=FALSE){
+       military_budget[i,j] <- 90
+     } 
+   }
+}
+
+military_budget[military_budget == ""] = NA
+military_budget <- lapply(military_budget,as.numeric)
+
+model <- lm(military_budget$"Military budget" ~ military_budget$"Main battle tanks"+military_budget$"Aircraft carriers"+military_budget$"AWS"+military_budget$"Cruisers"+military_budget$"Destroyers"+military_budget$"Frigates"+military_budget$"Corvettes"+military_budget$"Nuclear submarines"+military_budget$"Non-nuclear Submarines"+military_budget$"Military aircraft"+military_budget$"Attack helicopters"+military_budget$"Nuclear weapons"+military_budget$"Military satellites", data = military_budget)
+
+
+
+
+results <- as.data.frame(summary(model)$coefficients)
+
+results
+```
+
+
+
+## get_text()
+Using the get_text function we can crawl all the text on the webpage. Entering the webpage address and return a list of strings containing all the text in the webpage.
+
+For example, if we want to get all the text on the Canada introduction page, we can use the get_text, then we can save the text for further use. The following code shows the text of the introduction of Canada.
+```{r, eval=FALSE}
+get_text("https://en.wanweibaike.com/wiki-Canada.")
+```
+
+Or we can get the text from the Pacific Ocean webpage.
+```{r, eval=FALSE}
+get_text("https://en.wanweibaike.com/wiki-Canada.")
+```
+
+
+## get_image()
+Using the get_image function we can crawl all the images on the webpage. Entering the webpage address and return a list of strings containing all the image address in the webpage. Having the image address we can easily download the images from the webpage.
+
+For example, if we want to get all the University of Toronto page's images, we can use get_image, then we can have the list of all the images for further use. The following code shows the image address of the University of Toronto wiki webpage.
+```{r, eval=FALSE}
+get_image("https://en.wanweibaike.com/wiki-University%20of%20Toronto")
+```
+
+Or, we can get all the image address for the Toronto wiki webpage.
+```{r, eval=FALSE}
+get_image("https://en.wanweibaike.com/wiki-Toronto")
+```
+
+
+# Reference
+
+  R Core Team (2020). R: A language and environment for statistical computing. R
+  Foundation for Statistical Computing, Vienna, Austria. URL
+  https://www.R-project.org/.
+
+  Duncan Temple Lang (2021). XML: Tools for Parsing and Generating XML Within R and
+  S-Plus. R package version 3.99-0.6. https://CRAN.R-project.org/package=XML
+
+  Duncan Temple Lang (2021). RCurl: General Network (HTTP/FTP/...) Client Interface for
+  R. R package version 1.98-1.3. https://CRAN.R-project.org/package=RCurl
+
+  Hadley Wickham (2021). rvest: Easily Harvest (Scrape) Web Pages. R package version
+  1.0.0. https://CRAN.R-project.org/package=rvest
+
+  Hadley Wickham, Peter Danenberg, Gábor Csárdi and Manuel Eugster (2020). roxygen2:
+  In-Line Documentation for R. R package version 7.1.1.
+  https://CRAN.R-project.org/package=roxygen2
+

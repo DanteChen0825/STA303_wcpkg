@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Zhiang Chen" />
+
+
+<title>Wcpkg Vignette</title>
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Wcpkg Vignette</h1>
+<h4 class="author">Zhiang Chen</h4>
+<h4 class="date">30/03/2021</h4>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">knitr<span class="op">::</span>opts_chunk<span class="op">$</span><span class="kw">set</span>(</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">  <span class="dt">collapse =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">  <span class="dt">comment =</span> <span class="st">&quot;#&gt;&quot;</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(wcpkg)</a></code></pre></div>
+<div id="prerequisites" class="section level1">
+<h1>Prerequisites</h1>
+<p>This pacakge use some function from “XML”, “RCurl” and “rvest” to realize the web crawl, thus the user need to import these packages.</p>
+</div>
+<div id="main-functions" class="section level1">
+<h1>Main Functions</h1>
+<p>There are 3 function in this package, get_table(), get_text() and get_image().</p>
+<div id="get_table" class="section level2">
+<h2>get_table()</h2>
+<p>Using get_table function we can crawl all the table in the webpage. Entering the webpage address and return a list of dataframe showing all the tables.</p>
+<p>For example if we want to quickly save all the ambassadors send to Canda, we can find the webpage that contain the information and use get_table(), then we can save the table as a dataframe. The following code shows the first 10 line of the table of ambassors send to Canada.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">ambassadors_to_Canada =<span class="st"> </span><span class="kw">get_table</span>(<span class="st">&quot;https://en.wanweibaike.com/wiki-List%20of%20ambassadors%20to%20Canada&quot;</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">as.data.frame</span>(ambassadors_to_Canada[<span class="dv">2</span>])[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;            NULL.V1                          NULL.V2</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt; 1  Sending country                             Name</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; 2             Oman Hunaina Sultan Ahmed Al-Mughairy</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; 3         Cameroon    Solomon Azoh-Mbi Anu'a-Gheyle</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co">#&gt; 4         Honduras Sofia Lastenia Cerrato Rodriguez</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co">#&gt; 5       San Marino                  Damiano Beleffi</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">#&gt; 6        Singapore              Philip Eng Heng Nee</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="co">#&gt; 7         Holy See         Archbishop Luigi Bonazzi</span></a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="co">#&gt; 8             Chad                Mahamat Ali Adoum</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="co">#&gt; 9           Brunei         PG Kamal Bashah PG Ahmad</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="co">#&gt; 10          Monaco             Maguy Maccario-Doyle</span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;                             NULL.V3 NULL.V4</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt; 1  Credentials(As of 23 March 2021)   Notes</span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; 2                   30 October 2007     [1]</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; 3                      26 June 2008     [2]</span></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="co">#&gt; 4                 23 September 2010        </span></a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co">#&gt; 5                       18 May 2011     [3]</span></a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co">#&gt; 6                      10 June 2013  [2][4]</span></a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co">#&gt; 7                     13 March 2014     [5]</span></a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">#&gt; 8                      27 June 2014  [3][6]</span></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="co">#&gt; 9                    2 October 2014     [2]</span></a>
+<a class="sourceLine" id="cb3-24" data-line-number="24"><span class="co">#&gt; 10                 16 December 2014     [1]</span></a></code></pre></div>
+<p>The following is an example we Crawl the opening military budget data for more than 100 countries from the webpage. By doing some data cleaning, using the data we have we can conduct a simple linear regression, and we might find that on average, each attack helicopter is correalted with US$54.47 million increase in the military budget and some other interesting conclusions.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">military_budget =<span class="st"> </span><span class="kw">get_table</span>(<span class="st">&quot;https://en.wanweibaike.com/wiki-List%20of%20countries%20with%20warships&quot;</span>)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">military_budget =<span class="st"> </span><span class="kw">as.data.frame</span>(military_budget[<span class="dv">4</span>])</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">military_budget &lt;-<span class="st"> </span>military_budget[<span class="op">-</span><span class="dv">1</span>,]</a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="kw">names</span>(military_budget) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Countries&quot;</span>,<span class="st">&quot;Military budget&quot;</span>,<span class="st">&quot;Main battle tanks&quot;</span>,<span class="st">&quot;Aircraft carriers&quot;</span>,<span class="st">&quot;AWS&quot;</span>,<span class="st">&quot;Cruisers&quot;</span>,<span class="st">&quot;Destroyers&quot;</span>,<span class="st">&quot;Frigates&quot;</span>,<span class="st">&quot;Corvettes&quot;</span>,<span class="st">&quot;Nuclear submarines&quot;</span>,<span class="st">&quot;Non-nuclear Submarines&quot;</span>,<span class="st">&quot;Military aircraft&quot;</span>,<span class="st">&quot;Attack helicopters&quot;</span>,<span class="st">&quot;Nuclear weapons&quot;</span>,<span class="st">&quot;Military satellites&quot;</span>,<span class="st">&quot;Sources&quot;</span>,<span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb4-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb4-12" data-line-number="12">military_budget&lt;-<span class="st"> </span>military_budget[<span class="dv">1</span><span class="op">:</span><span class="dv">170</span>,]</a>
+<a class="sourceLine" id="cb4-13" data-line-number="13">military_budget&lt;-<span class="st"> </span>military_budget[,<span class="op">-</span>((<span class="dv">16</span>)<span class="op">:</span><span class="dv">17</span>)]</a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">military_budget&lt;-<span class="st"> </span>military_budget[,<span class="op">-</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">1</span>)]</a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"></a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="op">:</span><span class="dv">171</span>){</a>
+<a class="sourceLine" id="cb4-18" data-line-number="18">   <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">14</span>){</a>
+<a class="sourceLine" id="cb4-19" data-line-number="19">     <span class="cf">if</span> (<span class="kw">grepl</span>(<span class="st">&quot;N&quot;</span>, military_budget[i,j])<span class="op">!=</span><span class="ot">FALSE</span>){</a>
+<a class="sourceLine" id="cb4-20" data-line-number="20">       military_budget[i,j] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb4-21" data-line-number="21">     } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">grepl</span>(<span class="st">&quot;a&quot;</span>, military_budget[i,j])<span class="op">!=</span><span class="ot">FALSE</span>){</a>
+<a class="sourceLine" id="cb4-22" data-line-number="22">       military_budget[i,j] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb4-23" data-line-number="23">     } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">grepl</span>(<span class="st">&quot;T&quot;</span>, military_budget[i,j])<span class="op">!=</span><span class="ot">FALSE</span>){</a>
+<a class="sourceLine" id="cb4-24" data-line-number="24">       military_budget[i,j] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb4-25" data-line-number="25">     } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">grepl</span>(<span class="st">&quot;h&quot;</span>, military_budget[i,j])<span class="op">!=</span><span class="ot">FALSE</span>){</a>
+<a class="sourceLine" id="cb4-26" data-line-number="26">       military_budget[i,j] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb4-27" data-line-number="27">     } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">grepl</span>(<span class="st">&quot;e&quot;</span>, military_budget[i,j])<span class="op">!=</span><span class="ot">FALSE</span>){</a>
+<a class="sourceLine" id="cb4-28" data-line-number="28">       military_budget[i,j] &lt;-<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb4-29" data-line-number="29">     } <span class="cf">else</span> <span class="cf">if</span> (<span class="kw">grepl</span>(<span class="st">&quot;f&quot;</span>, military_budget[i,j])<span class="op">!=</span><span class="ot">FALSE</span>){</a>
+<a class="sourceLine" id="cb4-30" data-line-number="30">       military_budget[i,j] &lt;-<span class="st"> </span><span class="dv">90</span></a>
+<a class="sourceLine" id="cb4-31" data-line-number="31">     } </a>
+<a class="sourceLine" id="cb4-32" data-line-number="32">   }</a>
+<a class="sourceLine" id="cb4-33" data-line-number="33">}</a>
+<a class="sourceLine" id="cb4-34" data-line-number="34"></a>
+<a class="sourceLine" id="cb4-35" data-line-number="35">military_budget[military_budget <span class="op">==</span><span class="st"> &quot;&quot;</span>] =<span class="st"> </span><span class="ot">NA</span></a>
+<a class="sourceLine" id="cb4-36" data-line-number="36">military_budget &lt;-<span class="st"> </span><span class="kw">lapply</span>(military_budget,as.numeric)</a>
+<a class="sourceLine" id="cb4-37" data-line-number="37"></a>
+<a class="sourceLine" id="cb4-38" data-line-number="38">model &lt;-<span class="st"> </span><span class="kw">lm</span>(military_budget<span class="op">$</span><span class="st">&quot;Military budget&quot;</span> <span class="op">~</span><span class="st"> </span>military_budget<span class="op">$</span><span class="st">&quot;Main battle tanks&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Aircraft carriers&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;AWS&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Cruisers&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Destroyers&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Frigates&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Corvettes&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Nuclear submarines&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Non-nuclear Submarines&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Military aircraft&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Attack helicopters&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Nuclear weapons&quot;</span><span class="op">+</span>military_budget<span class="op">$</span><span class="st">&quot;Military satellites&quot;</span>, <span class="dt">data =</span> military_budget)</a>
+<a class="sourceLine" id="cb4-39" data-line-number="39"></a>
+<a class="sourceLine" id="cb4-40" data-line-number="40"></a>
+<a class="sourceLine" id="cb4-41" data-line-number="41"></a>
+<a class="sourceLine" id="cb4-42" data-line-number="42"></a>
+<a class="sourceLine" id="cb4-43" data-line-number="43">results &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">summary</span>(model)<span class="op">$</span>coefficients)</a>
+<a class="sourceLine" id="cb4-44" data-line-number="44"></a>
+<a class="sourceLine" id="cb4-45" data-line-number="45">results</a></code></pre></div>
+</div>
+<div id="get_text" class="section level2">
+<h2>get_text()</h2>
+<p>Using get_text function we can crawl all the text in the webpage. Entering the webpage address and return a list of string containing all the text in the webpage.</p>
+<p>For example if we want to get all the text in the Canada introduction page, we can use the get_text, then we can save the text for futher use. The following code shows the text of intruduction of Canada.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">get_text</span>(<span class="st">&quot;https://en.wanweibaike.com/wiki-Canada.&quot;</span>)</a></code></pre></div>
+<p>Or we can get the text from the Pacific Ocean webpage.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">get_text</span>(<span class="st">&quot;https://en.wanweibaike.com/wiki-Canada.&quot;</span>)</a></code></pre></div>
+</div>
+<div id="get_image" class="section level2">
+<h2>get_image()</h2>
+<p>Using get_image function we can crawl all the image in the webpage. Entering the webpage address and return a list of string containing all the image address in the webpage. Having the image address we can easily download the images from the webpage.</p>
+<p>For example, if we want to get all the University of Toronto page’s images, we can use get_image, then we can have the list of all the images for futher use. The following code shows the image address of University of Toronto wiki webpage.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">get_image</span>(<span class="st">&quot;https://en.wanweibaike.com/wiki-University%20of%20Toronto&quot;</span>)</a></code></pre></div>
+<p>Or, we can get all the image address for Toronto wiki webpage.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">get_image</span>(<span class="st">&quot;https://en.wanweibaike.com/wiki-Toronto&quot;</span>)</a></code></pre></div>
+</div>
+</div>
+<div id="reference" class="section level1">
+<h1>Reference</h1>
+<p>R Core Team (2020). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria. URL <a href="https://www.R-project.org/" class="uri">https://www.R-project.org/</a>.</p>
+<p>Duncan Temple Lang (2021). XML: Tools for Parsing and Generating XML Within R and S-Plus. R package version 3.99-0.6. <a href="https://CRAN.R-project.org/package=XML" class="uri">https://CRAN.R-project.org/package=XML</a></p>
+<p>Duncan Temple Lang (2021). RCurl: General Network (HTTP/FTP/…) Client Interface for R. R package version 1.98-1.3. <a href="https://CRAN.R-project.org/package=RCurl" class="uri">https://CRAN.R-project.org/package=RCurl</a></p>
+<p>Hadley Wickham (2021). rvest: Easily Harvest (Scrape) Web Pages. R package version 1.0.0. <a href="https://CRAN.R-project.org/package=rvest" class="uri">https://CRAN.R-project.org/package=rvest</a></p>
+<p>Hadley Wickham, Peter Danenberg, Gábor Csárdi and Manuel Eugster (2020). roxygen2: In-Line Documentation for R. R package version 7.1.1. <a href="https://CRAN.R-project.org/package=roxygen2" class="uri">https://CRAN.R-project.org/package=roxygen2</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

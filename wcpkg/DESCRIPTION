@@ -1,0 +1,19 @@
+Package: wcpkg
+Type: Package
+Title: Web Crawler
+Version: 1.1.0
+Author: Zhiang Chen
+Maintainer: The package maintainer <zhiang.chen@mail.utoronto.ca>
+Description: This package combine some function in other package to realize the basic crawl of texts, images and tables in the web page.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    XML,
+    RCurl,
+    rvest
+RoxygenNote: 7.1.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
