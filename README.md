@@ -1,8 +1,9 @@
 # STA303_wcpkg
 Author: Zhiang Chen
+
 E-mail: zhiang.chen@mail.utoronto.ca
 
-## Introduction
+## General Info
 The web crawl r package which can help you save the webpage text, image and table. For the more detailed intrudction of the function inside the package please read the vignette in STA303_wcpkg/wcpkg/vignettes/my-vignette.
 
 ## Installation
